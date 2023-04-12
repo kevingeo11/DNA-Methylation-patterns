@@ -127,3 +127,20 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# proj specific folders
+papers/
+Progress/
+Random/
+Results/
+Walter\ group\ data/
+Kerstin\ paper
+
+# proj specific files
+*.pdf
+*.wig
+*.gz
+*.bed
+*.bw
+*.tar
+*.pdb
