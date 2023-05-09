@@ -34,7 +34,7 @@ sugar_backbone_dna_atoms = ["P",
                             "C1'"
                             ]
 
-main_path = 'D:\\Work\\DNA Methylation patterns\\'
+main_path = 'D:\\Work\\DNA-Methylation-patterns\\'
 steric_path = main_path + 'Results\\Steric_Clash\\'
 
 pdb_nuclesome = '1KX5'
@@ -170,6 +170,7 @@ def make_superimpose(steric_path, pdb_nuclesome, pdb_dnmt):
     I_end = I_start+len_DNA_part
     J_start = 148-len_DNA_part
     J_end = 148
+
 
     ######## START WHILE LOOP ITERATION DNA NUCLEOSOME ##########
     clash_dict = dict()

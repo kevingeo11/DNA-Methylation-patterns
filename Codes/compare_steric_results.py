@@ -40,3 +40,5 @@ data = pickle.load(filo, encoding='bytes')
 print('Old = ', data[1][b'steric_clash_list'][b'X_ALA669'])
 filo.close()
 print(' ')
+
+
