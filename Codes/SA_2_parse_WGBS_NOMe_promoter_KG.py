@@ -76,14 +76,19 @@ def parse_UCSC_file(infile, outfile):
                     if coords not in seen_coords:
                         seen_coords.add(coords)
 
-                        promo_start = 2000
-                        promo_end = 1000
+                        # promo_start = 2000
+                        # promo_end = 1000
+                        promo_start = 100000
+                        promo_end = 100000
                         if strand == "+":
                             promoter_start = txStart - promo_start
                             promoter_end = txStart + promo_end
                         else:
                             promoter_start = txEnd - promo_end
                             promoter_end = txEnd + promo_start
+                        
+                        if promoter_start < 0:
+                                promoter_start = 0
 
                         if cdsStart != cdsEnd and geneName[0:3] != 'MIR' and geneName[0:3] != 'SNO' and '_' not in chrom:
                             # writer.writerow([chrom, promoter_start, promoter_end, refid, geneName, txStart, txEnd, strand])
@@ -92,7 +97,8 @@ def parse_UCSC_file(infile, outfile):
 
 main_path = 'D:\\Work\\Helms-Lab\\DNA-Methylation-patterns\\'
 data_path = main_path + 'Data\\'
-outpath_processing = main_path + 'Data\\Filtered Data\\'
+# outpath_processing = main_path + 'Data\\Filtered Data\\'
+outpath_processing = main_path + 'Data\\Promoter Extenstion Analysis\\Promoters\\'
 
 '''
 HCG, GCH
@@ -105,7 +111,7 @@ if False:
     WGBS_file = data_path + 'Human Data\\' + 'GSM5695527_IMR90_bT_WGBS_rep1_final.b37.calmd.cytosine.filtered.sort.HCG.strand.6plus2.bed.gz'
     filter_exp_files(WGBS_file, WGBS_outfile)
     
-if True:
+if False:
     print('NOMe')
     NOMe_file = data_path + 'Human Data\\' + 'GSM5695527_IMR90_bT_WGBS_rep1_final.b37.calmd.cytosine.filtered.sort.GCH.strand.6plus2.bed.gz'
     filter_exp_files(NOMe_file, NOMe_outfile)
@@ -115,7 +121,7 @@ Promoter
 '''    
 if True:
     UCSC_file = data_path + 'refSeq h19\\' + '0-refGene_complete_hg19.csv.gz'
-    outfile_UCSC_promo = outpath_processing + '0-refGene_complete_hg19_promoter_bed.csv'
+    outfile_UCSC_promo = outpath_processing + 'ref-promo-100k.csv'
     parse_UCSC_file(UCSC_file,outfile_UCSC_promo)
 
     
