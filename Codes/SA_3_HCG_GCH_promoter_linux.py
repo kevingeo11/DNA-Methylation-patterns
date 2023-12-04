@@ -35,7 +35,7 @@ def parse_intersect_result(inter_out_promo):
             if strand == "-":
                 promo_abs_pos = promo_end - meth_end
         
-            rel_pos = promo_abs_pos - 10000
+            rel_pos = promo_abs_pos - 2000
         
             if dict_id not in seen_ids:
                 seen_ids.add(dict_id)
@@ -176,14 +176,16 @@ def randomize_genome_methylation(df_promo_nuc_WGBS_pandas, inter_out_promo_WGBS,
     all_meth_rates_random = random.sample(all_meth_rates, len(all_meth_rates))   
     
     # read csv file and add methylation rate from new random list
+    """
+        There is some error here
+    """
     line_pos = 0
     with open(outfile_random, 'w') as fout:
         with open(inter_out_promo_WGBS, 'r') as f:
             reader = csv.reader(f, delimiter='\t')
             for line_s in reader:
-                if line_s[0] == '':
-                    line_s[5] = str(all_meth_rates_random[line_pos])
-                    line_pos += 1 
+                line_s[12] = str(all_meth_rates_random[line_pos%len(all_meth_rates)])
+                line_pos += 1
                 fout.write('\t'.join(line_s) + '\n')
 
 def plot_NOMe_WGBS_in_promoter(df_inter_promo_NOMe, dataset_name, plot_out):
@@ -225,19 +227,14 @@ def plot_NOMe_WGBS_in_promoter(df_inter_promo_NOMe, dataset_name, plot_out):
     axis_font = {'size':str(size_plot)}
     
     plt.figure(figsize=(20, 7), facecolor='w', edgecolor='k')
-    ax = plt.subplot(1,1,1)
-    
-    zed = [tick.label.set_fontsize(size_plot) for tick in ax.xaxis.get_major_ticks()]
-    zed = [tick.label.set_fontsize(size_plot) for tick in ax.yaxis.get_major_ticks()]
-    
     
     x = []
     y = []
-    print('This IF condition should be kept back to normal')
+    
     for rel_pos_x in sorted(av_dict.keys()):
-        # if rel_pos_x >= inter_start and rel_pos_x <= inter_end:
-        x.append(rel_pos_x)
-        y.append(np.mean(av_dict[rel_pos_x]))
+        if rel_pos_x >= inter_start and rel_pos_x <= inter_end:
+            x.append(rel_pos_x)
+            y.append(np.mean(av_dict[rel_pos_x]))
 
     plt.plot(x, y, "-", color = "grey")
         
@@ -390,20 +387,20 @@ def plot_NOMe_WGBS_RANDOM_in_promoter(df_inter_promo_NOMe, dataset_name, ds):
 
 
 main_path = '/home/kevin/DNA-Methylation-patterns/'
-data_path = main_path + 'Data/'
-inpath_processing = main_path + 'Data/Promoter Extenstion Analysis/Intersect/'
-outpath_processing = main_path + 'Data/Promoter Extenstion Analysis/pandas/'
+data_path = main_path + 'Datasetb37_bismark/'
+inpath_processing = main_path + 'Datasetb37_bismark/downstream/'
+outpath_processing = main_path + 'Datasetb37_bismark/downstream/'
 
-# inter_out_promo_NOMe = inpath_processing + 'NOMe_intersect.csv'
-# inter_out_promo_WGBS = inpath_processing + 'WGBS_intersect.csv'
-inter_out_promo_NOMe = inpath_processing + 'NOMe_intersect_10k.csv'
-inter_out_promo_WGBS = inpath_processing + 'WGBS_intersect_10k.csv'
+inter_out_promo_NOMe = inpath_processing + 'NOMe_intersect.csv'
+inter_out_promo_WGBS = inpath_processing + 'WGBS_intersect.csv'
+# inter_out_promo_NOMe = inpath_processing + 'NOMe_intersect_10k.csv'
+# inter_out_promo_WGBS = inpath_processing + 'WGBS_intersect_10k.csv'
 
 #pandas intersect outfiles
-# outfile_pandas_NOMe = outpath_processing + 'pandas_promoter_NOMe.csv'
-# outfile_pandas_WGBS = outpath_processing + 'pandas_promoter_WGBS.csv'
-outfile_pandas_NOMe = outpath_processing + 'pandas_promoter_NOMe_10m.csv'
-outfile_pandas_WGBS = outpath_processing + 'pandas_promoter_WGBS_10k.csv'
+outfile_pandas_NOMe = outpath_processing + 'pandas_promoter_NOMe.csv'
+outfile_pandas_WGBS = outpath_processing + 'pandas_promoter_WGBS.csv'
+# outfile_pandas_NOMe = outpath_processing + 'pandas_promoter_NOMe_10m.csv'
+# outfile_pandas_WGBS = outpath_processing + 'pandas_promoter_WGBS_10k.csv'
 
 #random files for sliding window
 inter_out_promo_WGBS_RANDOM = outpath_processing + 'intersectBed_UCSC_complete_promoter_WGBS_RANDOM.csv'
@@ -413,8 +410,8 @@ outfile_pandas_WGBS_RANDOM = outpath_processing + 'pandas_promoter_WGBS_RANDOM.c
 Parse files and make pandas df
 '''
 if False:
-    print('NOMe')
-    make_pandas_df(inter_out_promo_NOMe,outfile_pandas_NOMe)
+    # print('NOMe')
+    # make_pandas_df(inter_out_promo_NOMe,outfile_pandas_NOMe)
     
     print('WGBS')
     make_pandas_df(inter_out_promo_WGBS,outfile_pandas_WGBS)
@@ -435,39 +432,39 @@ Analyze GCH and HCG in promoter
 '''
 
 #NOMe
-if True:
+if False:
     #plot average 100-GpC methylation around promoter
     df_inter_promo_NOMe = pd.read_csv(outfile_pandas_NOMe, index_col = 0)
-    plot_out = outpath_processing + 'NOMe_promoter_average_10m.png'
+    plot_out = outpath_processing + 'NOMe_promoter_average.png'
     plot_NOMe_WGBS_in_promoter(df_inter_promo_NOMe, "NOMe", plot_out)
 
 #WGBS  
-if False:
+if True:
     df_inter_promo_WGBS = pd.read_csv(outfile_pandas_WGBS, index_col = 0)
     
     #calc distances from C to C with methylation rate != 0  
-    plot_out = outpath_processing + "WGBS_promoter_distances_CpGs.pdf"
+    plot_out = outpath_processing + "WGBS_promoter_distances_CpGs.png"
     plot_WGBS_CpG_distances_in_promoter(df_inter_promo_WGBS,plot_out)
     
     #calc 100-CgG methylation
-    plot_out = outpath_processing + "WGBS_promoter_average_CpG_meth.pdf"
+    plot_out = outpath_processing + "WGBS_promoter_average_CpG_meth.png"
     plot_NOMe_WGBS_in_promoter(df_inter_promo_WGBS, "WGBS", plot_out)
 
 #RANDOM
-if False: 
+if True: 
     df_inter_promo_WGBS_RANDOM = pd.read_csv(outfile_pandas_WGBS_RANDOM, index_col=0)
     
-    plot_out = outpath_processing + "WGBS_RANDOM_distances_CpGs.pdf"
+    plot_out = outpath_processing + "WGBS_RANDOM_distances_CpGs.png"
     plot_WGBS_CpG_distances_in_promoter(df_inter_promo_WGBS_RANDOM,plot_out)
     
-    plot_out = outpath_processing + "WGBS_RANDOM_promoter_average_CpG_meth.pdf"
+    plot_out = outpath_processing + "WGBS_RANDOM_promoter_average_CpG_meth.png"
     plot_NOMe_WGBS_in_promoter(df_inter_promo_WGBS_RANDOM,"WGBS",plot_out)
 
 #RANDOM + WGBS
-if False:
+if True:
     df_inter_promo_WGBS = pd.read_csv(outfile_pandas_WGBS, index_col=0)
     df_inter_promo_WGBS_RANDOM = pd.read_csv(outfile_pandas_WGBS_RANDOM, index_col=0)
-    plot_out = outpath_processing + "WGBS_AND_RANDOM_promoter_average_CpG_meth.pdf"
+    plot_out = outpath_processing + "WGBS_AND_RANDOM_promoter_average_CpG_meth.png"
     
     plt.figure(figsize=(20, 7), facecolor='w', edgecolor='k')
     ax = plt.subplot(1,1,1)

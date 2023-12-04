@@ -38,11 +38,11 @@ def parse_NDR_karl(karl_file, outfile_NDR):
         with open(outfile_NDR, 'w') as fout:
             for line in fin:
                 line_s = line.strip().split('\t')
-                chrom = line_s[0]
+                chrom = 'chr' + line_s[0]
                 start = line_s[1]
                 end = line_s[2]
 
-                if chrom == 'chr':
+                if line_s[0] == 'chr':
                     continue
 
                 fout.write('\t'.join([chrom, start, end]) + '\n')
@@ -64,54 +64,50 @@ def make_pandas_promo_nuc_file(inter_out_promo, outfile):
         reader = csv.reader(f, delimiter ='\t')
         read = False
         for line_s in reader:
-            if line_s[0] == '':
-                nuc_region_start = int(line_s[2])
-                nuc_region_end = int(line_s[3])
-                read = True
-            else:
-                chrom = line_s[0]            
-                promo_start = int(line_s[1])
-                promo_end = int(line_s[2])
-                refid = line_s[3]
-                gene_name = line_s[4]
-                TSS = int(line_s[5])
-                TES = int(line_s[6])
-                strand = line_s[7]
+            chrom = line_s[0]            
+            promo_start = int(line_s[1])
+            promo_end = int(line_s[2])
+            refid = line_s[3]
+            gene_name = line_s[4]
+            TSS = int(line_s[5])
+            TES = int(line_s[6])
+            strand = line_s[7]
+
+            nuc_region_start = int(line_s[9])
+            nuc_region_end = int(line_s[10])
             
-            if read:
-                read = False
 
-                if nuc_region_start >= promo_start and nuc_region_end <= promo_end:    
-                    if strand == "+":
-                        promo_abs_start = nuc_region_start - promo_start
-                        promo_abs_end = nuc_region_end - promo_start
-                        
-                    if strand == "-":
-                        promo_abs_end = promo_end - nuc_region_start
-                        promo_abs_start = promo_end - nuc_region_end
+            if nuc_region_start >= promo_start and nuc_region_end <= promo_end:    
+                if strand == "+":
+                    promo_abs_start = nuc_region_start - promo_start
+                    promo_abs_end = nuc_region_end - promo_start
+                    
+                if strand == "-":
+                    promo_abs_end = promo_end - nuc_region_start
+                    promo_abs_start = promo_end - nuc_region_end
 
-                    rel_start = promo_abs_start - 2000
-                    rel_end = promo_abs_end - 2000
+                rel_start = promo_abs_start - 2000
+                rel_end = promo_abs_end - 2000
 
-                    info_dict["chrom"].append(chrom)
-                    info_dict["promoter_start"].append(promo_start)
-                    info_dict["promoter_end"].append(promo_end)
-                    info_dict["refid"].append(refid)
-                    info_dict["gene_name"].append(gene_name)
-                    info_dict["TSS"].append(TSS)
-                    info_dict["TES"].append(TES)
-                    info_dict["strand"].append(strand)
-                    
-                    info_dict["nuc_region_start_genome"].append(nuc_region_start)
-                    info_dict["nuc_region_end_genome"].append(nuc_region_end)
-                    
-                    info_dict["nuc_start_promo_abs"].append(promo_abs_start)
-                    info_dict["nuc_end_promo_abs"].append(promo_abs_end)
-                    
-                    info_dict["nuc_start_promo_rel"].append(rel_start)
-                    info_dict["nuc_end_promo_rel"].append(rel_end)
-                    
-                    info_dict["region_length"].append(rel_end-rel_start)
+                info_dict["chrom"].append(chrom)
+                info_dict["promoter_start"].append(promo_start)
+                info_dict["promoter_end"].append(promo_end)
+                info_dict["refid"].append(refid)
+                info_dict["gene_name"].append(gene_name)
+                info_dict["TSS"].append(TSS)
+                info_dict["TES"].append(TES)
+                info_dict["strand"].append(strand)
+                
+                info_dict["nuc_region_start_genome"].append(nuc_region_start)
+                info_dict["nuc_region_end_genome"].append(nuc_region_end)
+                
+                info_dict["nuc_start_promo_abs"].append(promo_abs_start)
+                info_dict["nuc_end_promo_abs"].append(promo_abs_end)
+                
+                info_dict["nuc_start_promo_rel"].append(rel_start)
+                info_dict["nuc_end_promo_rel"].append(rel_end)
+                
+                info_dict["region_length"].append(rel_end-rel_start)
 
             
     # Built dataframe
@@ -171,7 +167,7 @@ def plot_nuc_pos_distribution(df_inter, region, outname):
     plt.axvline(x=0,linestyle='dashed',linewidth=2,color='grey')
     
     
-    plt.savefig(outname+"_nuc_pos_distr_promo.pdf",bbox_inches='tight')
+    plt.savefig(outname + "nuc_pos_distr_promo.png",bbox_inches='tight')
     plt.show()
     plt.close()    
     
@@ -191,18 +187,18 @@ def plot_nuc_pos_distribution(df_inter, region, outname):
     plt.xlim(0,2000)
     plt.xticks(range(0,2000,200))
     
-    plt.savefig(outname+"_nuc_length_promo.pdf",bbox_inches='tight')
+    plt.savefig(outname + "nuc_length_promo.png",bbox_inches='tight')
     plt.close()   
 
-main_path = 'D:\\Work\\Helms-Lab\\DNA-Methylation-patterns\\'
-inpath_processing = main_path + 'Data\\Sorted Data\\'
-outpath_processing = main_path + 'Data\\NDR_NOR Data\\'
+main_path = '/home/kevin/DNA-Methylation-patterns/'
+inpath_processing = main_path + 'Datasetb37_bismark/downstream/'
+outpath_processing = main_path + 'Datasetb37_bismark/downstream/'
 
 '''
 HCG, GCH
 '''
 NOMe_infile = inpath_processing + 'NOMe_filtered_bed_sorted.csv'
-NOMe_outfile = outpath_processing + 'NOMe_in_karl_bed_mod.csv'
+NOMe_outfile = outpath_processing + 'NOMe_in_karl.csv'
 
 ## NOMe sorted file erased
 # convert_to_karlHMM_format(NOMe_infile, NOMe_outfile)
@@ -219,12 +215,11 @@ if True:
         
         outfile_NDR = outpath_processing + "NOMe_NDR.bed"      # bed file from karl file
         outfile_NOR = outpath_processing + "NOMe_NOR.bed"
-
-        outpath_nuc_pos = outpath_processing + region + '\\'
         
-        if False:
-            karl_file = outpath_processing + "NOMe_in_karl.bed"
+        if False and region == 'NDRs':
+            karl_file = outpath_processing + "NOMe_out_karl.bed"
             parse_NDR_karl(karl_file, outfile_NDR)
+            break
         
         #take complement of NDR to get dense regions
         # if region == "NORs":
@@ -235,8 +230,8 @@ if True:
         ####### MAP PROMOTER to NOR/NDR and make PANDAS table
         outfile_UCSC_promo = main_path + 'refSeq h19\\' + '0-refGene_complete_hg19.csv'
         output_file_nuc_regions = outfile_NDR if region=="NDRs" else outfile_NOR
-        output_file_inter = outpath_nuc_pos + "intersectBed_promoter_NucRegions.csv"
-        outfile_inter_pandas = outpath_nuc_pos + "pandas_intersectBed_promoter_NucRegions.csv"
+        output_file_inter = outpath_processing + 'NOMe_{}_intersect.bed'.format(region[:-1])
+        outfile_inter_pandas = outpath_processing + 'pandas_NOMe_{}_intersectBed_promoter_NucRegions.csv'.format(region[:-1])
 
         if False:
             print("map:promoter - nuc position")
@@ -249,7 +244,7 @@ if True:
         if True:
             print("plot nucleosome position in the promoter region")
             df_inter = pd.read_csv(outfile_inter_pandas, index_col = 0)
-            outname = outpath_nuc_pos + "plot_" + region + "_"
+            outname = outpath_processing + "plot_" + region[:-1] + "_"
             plot_nuc_pos_distribution(df_inter, region, outname)
 
 
