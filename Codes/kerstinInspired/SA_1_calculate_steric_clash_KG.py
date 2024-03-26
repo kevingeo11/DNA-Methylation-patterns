@@ -34,8 +34,9 @@ sugar_backbone_dna_atoms = ["P",
                             "C1'"
                             ]
 
-main_path = 'D:\\Work\\DNA-Methylation-patterns\\'
-steric_path = main_path + 'Results\\Steric_Clash\\'
+main_path = '/home/kevin/DNA-Methylation-patterns/'
+data_path = main_path + 'downstream/chr1_pstrand/'
+steric_path = main_path + 'downstream/steric_clash/'
 
 pdb_nuclesome = '1KX5'
 pdb_dnmt = '3PTA'
@@ -68,8 +69,8 @@ def is_steric_clash(atom1,atom2,distance):
         return False
 
 def make_superimpose(steric_path, pdb_nuclesome, pdb_dnmt):
-    dnmt_file = steric_path + 'pdb_files\\' + pdb_dnmt + '.pdb'
-    nuc_file = steric_path + 'pdb_files\\' + pdb_nuclesome + '.pdb'
+    dnmt_file = steric_path + 'pdb_files/' + pdb_dnmt + '.pdb'
+    nuc_file = steric_path + 'pdb_files/' + pdb_nuclesome + '.pdb'
     
     #remove water
     # remove_water_from_pdb(nuc_file, pdb_nuclesome)
@@ -296,7 +297,7 @@ def make_superimpose(steric_path, pdb_nuclesome, pdb_dnmt):
         io = Bio.PDB.PDBIO()
         io.set_structure(dnmt_structure)    #write PDB file
         output_superpos_name = "dnmt_superpos_coords_" + str(I_start)
-        dnmt_moved_file = steric_path + "superposition\\dnmt_coords\\" + output_superpos_name + ".pdb"
+        dnmt_moved_file = steric_path + "superposition/dnmt_coords/" + output_superpos_name + ".pdb"
         io.save(dnmt_moved_file)
 
         ############ save both structures in one file ############
@@ -414,8 +415,8 @@ def make_superimpose(steric_path, pdb_nuclesome, pdb_dnmt):
             cmd.set('''seq_view''','''1''',quiet=1)
             
             
-            cmd.save(steric_path+"superposition\\superpos_dnmt_nuc_pse\\superposition_dnmt_nucleosome_"+str(I_start)+".pse")
-            fname = steric_path+"superposition\\superpos_dnmt_nuc_pse\\png\\superposition_dnmt_nucleosome_"+str(I_start)+"_1.png"
+            cmd.save(steric_path+"superposition/superpos_dnmt_nuc_pse/superposition_dnmt_nucleosome_"+str(I_start)+".pse")
+            fname = steric_path+"superposition/superpos_dnmt_nuc_pse/png/superposition_dnmt_nucleosome_"+str(I_start)+".png"
             cmd.png(fname, width=800, height=700, dpi=300,ray=1,quiet=1)
 
         ######## get new coordinates #############
@@ -492,8 +493,8 @@ def make_superimpose(steric_path, pdb_nuclesome, pdb_dnmt):
     # print("dump")
     if True:
         print('file writing')
-        pickle_dump(clash_dict,steric_path + "clash_dict")
-        pickle_dump(info_nbr_dict,steric_path + "info_nbr_dict")
+        pickle_dump(clash_dict, steric_path + "clash_dict")
+        pickle_dump(info_nbr_dict, steric_path + "info_nbr_dict")
 
 
 make_superimpose(steric_path, pdb_nuclesome, pdb_dnmt)

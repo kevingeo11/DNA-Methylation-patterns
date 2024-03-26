@@ -200,7 +200,7 @@ HCG, GCH
 NOMe_infile = inpath_processing + 'NOMe_filtered_bed_sorted.csv'
 NOMe_outfile = outpath_processing + 'NOMe_in_karl.csv'
 
-## NOMe sorted file erased
+# NOMe sorted file erased
 # convert_to_karlHMM_format(NOMe_infile, NOMe_outfile)
 
 # count(NOMe_outfile, 'chrX\t')
@@ -216,8 +216,9 @@ if True:
         outfile_NDR = outpath_processing + "NOMe_NDR.bed"      # bed file from karl file
         outfile_NOR = outpath_processing + "NOMe_NOR.bed"
         
-        if False and region == 'NDRs':
-            karl_file = outpath_processing + "NOMe_out_karl.bed"
+        if True and region == 'NDRs':
+            # karl_file = outpath_processing + "NOMe_out_karl.bed"
+            karl_file = outpath_processing + "out_strands.bed"
             parse_NDR_karl(karl_file, outfile_NDR)
             break
         
@@ -241,7 +242,7 @@ if True:
             print("parse map:promoter - nuc position")
             make_pandas_promo_nuc_file(output_file_inter, outfile_inter_pandas)
 
-        if True:
+        if False:
             print("plot nucleosome position in the promoter region")
             df_inter = pd.read_csv(outfile_inter_pandas, index_col = 0)
             outname = outpath_processing + "plot_" + region[:-1] + "_"

@@ -4,7 +4,6 @@ import numpy as np
 import csv
 import matplotlib.pyplot as plt
 
-print('parse mod was the 1st fun used')
 
 def parse_intersect_result(inter_out_promo):
     inter_dict = dict()
@@ -60,69 +59,6 @@ def parse_intersect_result(inter_out_promo):
             inter_dict[dict_id][meth_start]["nt"] = nt
 
             chrom, promo_start, promo_end, refid, gene_name, TSS, TES, strand, meth_start, meth_end, meth_rate, nt = ['ERROR']*12
-                
-    return inter_dict
-
-def parse_intersect_result_mod(inter_out_promo):
-    inter_dict = dict()
-    seen_ids = set()
-
-    with open(inter_out_promo) as f:
-        reader = csv.reader(f, delimiter = '\t')
-        read = False
-        for line_s in reader:
-            if line_s[0] == '':
-                meth_start = int(line_s[2])
-                meth_end = int(line_s[3])
-                meth_rate = float(line_s[5])
-                nt = line_s[6]
-                read = True
-            else:
-                chrom = line_s[0]            
-                promo_start = int(line_s[1])
-                promo_end = int(line_s[2])
-                refid = line_s[3]
-                gene_name = line_s[4]
-                TSS = int(line_s[5])
-                TES = int(line_s[6])
-                strand = line_s[7]
-
-            if read:
-                read = False
-
-                #diff transcript variants, e.g. gene NM_001105522 with '89644578-89653576' and '89657231-89666229' and same methylation pattern, if key is refid, loose one entry
-                dict_id = refid + "-" + str(promo_start)
-                
-                if strand == "+":
-                    promo_abs_pos = meth_start - promo_start
-                if strand == "-":
-                    promo_abs_pos = promo_end - meth_end
-            
-                rel_pos = promo_abs_pos - 2000
-            
-                if dict_id not in seen_ids:
-                    seen_ids.add(dict_id)
-                    inter_dict[dict_id] = dict()
-                
-                inter_dict[dict_id][meth_start] = dict()
-                
-                inter_dict[dict_id][meth_start]["chrom"] = chrom
-                inter_dict[dict_id][meth_start]["promoter_start"] = promo_start
-                inter_dict[dict_id][meth_start]["promoter_end"] = promo_end
-                inter_dict[dict_id][meth_start]["gene_name"] = gene_name
-                inter_dict[dict_id][meth_start]["TSS"] = TSS
-                inter_dict[dict_id][meth_start]["TES"] = TES
-                inter_dict[dict_id][meth_start]["strand"] = strand
-                
-                inter_dict[dict_id][meth_start]["meth_start_genome"] = meth_start
-                inter_dict[dict_id][meth_start]["meth_end_genome"] = meth_end
-                inter_dict[dict_id][meth_start]["meth_pos_promo_abs"] = promo_abs_pos
-                inter_dict[dict_id][meth_start]["meth_pos_promo_rel"] = rel_pos
-                            
-                inter_dict[dict_id][meth_start]["meth_rate"] = meth_rate
-                inter_dict[dict_id][meth_start]["nt"] = nt
-
-                chrom, promo_start, promo_end, refid, gene_name, TSS, TES, strand, meth_start, meth_end, meth_rate, nt = ['ERROR']*12
                 
     return inter_dict
 
