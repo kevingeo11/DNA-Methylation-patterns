@@ -135,10 +135,18 @@ Random/
 Results/
 Walter\ group\ data/
 Kerstin\ paper
-Data/
+Data*/
 Dataset/
+downstream/
+intron_reg/
+3_prime_UTR/
+ctcf/
+delete/
+intron_reg*/
+pmd_reg/
 
 # proj specific files
+.Rhistory
 *.pdf
 *.wig
 *.gz
@@ -147,3 +155,8 @@ Dataset/
 *.tar
 *.pdb
 *.csv
+*.zip
+*.json
+*.pse
+*.png
+Data/credentials.json
